@@ -57,6 +57,9 @@ const drawKeys = (arr, elem) => {
       case ('Ctrl'):
         newKey.classList.add('ctrl');
         break;
+      case ('Alt'):
+        newKey.classList.add('alt');
+        break;
       case ('&emsp;'):
         newKey.classList.add('space');
         break;
@@ -79,12 +82,15 @@ const drawKeyboard = () => {
   const container = document.createElement('div');
   const keyboard = document.createElement('section');
   const textarea = document.createElement('textarea');
+  const info = document.createElement('p');
   textarea.rows = 5;
   textarea.cols = 80;
+  info.innerText = 'Press Ctrl+Alt to switch ru/en';
+  info.classList.add('info');
 
   document.body.append(container);
   container.classList.add('main-styles');
-  container.append(textarea, keyboard);
+  container.append(textarea, keyboard, info);
   keyboard.classList.add('keyboard-styles');
 
   if (localStorage.getItem('isEng') === 'true') {
@@ -178,9 +184,11 @@ const keyStyleHandler = (elem) => {
 };
 
 const printOnKeypress = () => {
+  
   document.addEventListener('keydown', (event) => {
+    event.preventDefault();
     if (event.code === 'CapsLock') {
-      // event.preventDefault();
+      event.preventDefault();
       if (isCapslock) {
         document.querySelector('.keyboard-styles').innerHTML = '';
         drawKeys(dataObject.lowerCaseEn, document.querySelector('.keyboard-styles'));
@@ -202,18 +210,45 @@ const printOnKeypress = () => {
       if (document.querySelector('.caps').classList.contains('active')) {
         document.querySelector('.keyboard-styles').innerHTML = '';
         drawKeys(dataObject.lowerCaseEn, document.querySelector('.keyboard-styles'));
+        document.querySelector('.caps').classList.add('active');
       } else {
         document.querySelector('.keyboard-styles').innerHTML = '';
         drawKeys(dataObject.upperCaseEn, document.querySelector('.keyboard-styles'));
       }
     }
 
-    document.querySelectorAll('.key-style').forEach((item) => {
-      item.classList.remove('active');
-    });
+    if(event.code === 'AltLeft' || event.code === 'AltRight' || event.code === 'Tab') {
+      event.preventDefault();
+    }
+
+
+    switch(document.getElementById(event.code).innerText) {
+      case 'CapsLock':
+      case 'Alt':
+      case 'Ctrl':
+      case 'Shift':
+      case 'Win':
+        document.querySelector('TEXTAREA').value += '';
+        break;
+      case '←':
+        document.querySelector('TEXTAREA').value = document.querySelector('TEXTAREA').value.slice(0, -1);
+        break;
+      case 'Enter':
+        document.querySelector('TEXTAREA').value += '\n';
+        break;
+      case 'Tab':
+        document.querySelector('TEXTAREA').value += '\t';
+        break;
+      default:
+        document.querySelector('TEXTAREA').value += document.getElementById(event.code).innerText;
+    };
+
     document.getElementById(event.code).classList.add('active');
     document.querySelector('TEXTAREA').focus();
   });
+
+
+
 
   document.addEventListener('keyup', (event) => {
     document.querySelectorAll('DIV').forEach((item) => {
@@ -237,9 +272,9 @@ const printOnKeypress = () => {
 
 const switchLanguage = () => {
   document.addEventListener('keydown', (event) => {
-    // event.preventDefault();
     // console.log('meow');
     if (event.ctrlKey && event.altKey) {
+      event.preventDefault();
       if (localStorage.getItem('isEng') === 'true' && document.querySelector('.caps').classList.contains('active')) {
         localStorage.setItem('isEng', 'false');
         document.querySelector('.keyboard-styles').innerHTML = '';

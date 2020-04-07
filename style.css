@@ -42,7 +42,12 @@ textarea {
     flex-wrap: wrap;
 }
 
-.key-style, .caps, .shift, .tab, .enter, .ctrl, .space, .backspace {
+.info {
+    font-size: 1.5rem;
+    color: rgba(22, 176, 80, 1);
+}
+
+.key-style, .alt, .caps, .shift, .tab, .enter, .ctrl, .space, .backspace {
     display: inline-block;
     background-color: rgba(22, 176, 80, .5);
     border-radius: 5px;
@@ -55,7 +60,7 @@ textarea {
     padding-top: 1rem;
 }
 
-.key-style {
+.key-style, .alt {
     width: 4.5rem;
 }
 .caps, .backspace {
